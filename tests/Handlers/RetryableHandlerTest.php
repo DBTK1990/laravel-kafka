@@ -34,7 +34,7 @@ class RetryableHandlerTest extends TestCase
         $handler($messageMock);
 
         $this->assertSame(5, $failingHandler->getTimesInvoked());
-        $this->assertEquals([1e6, 2e6, 4e6, 8e6], $sleeper->getSleeps());
+        $this->assertEquals([1000000.0, 2000000.0, 4000000.0, 8000000.0], $sleeper->getSleeps());
     }
 
     public function testItBubblesExceptionWhenRetriesExceeded(): void
@@ -49,9 +49,9 @@ class RetryableHandlerTest extends TestCase
             $handler($messageMock);
 
             $this->fail('Handler passed but a \RuntimeException is expected.');
-        } catch (RuntimeException) {
+        } catch (RuntimeException $exception) {
             $this->assertSame(7, $failingHandler->getTimesInvoked());
-            $this->assertEquals([1e6, 2e6, 4e6, 8e6, 16e6, 32e6], $sleeper->getSleeps());
+            $this->assertEquals([1000000.0, 2000000.0, 4000000.0, 8000000.0, 16000000.0, 32000000.0], $sleeper->getSleeps());
         }
     }
 }

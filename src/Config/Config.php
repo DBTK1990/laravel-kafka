@@ -7,20 +7,68 @@ use Junges\Kafka\Contracts\Consumer;
 
 class Config
 {
-    public function __construct(
-        private string $broker,
-        private array $topics,
-        private ?string $securityProtocol = null,
-        private ?int $commit = null,
-        private ?string $groupId = null,
-        private ?Consumer $consumer = null,
-        private ?Sasl $sasl = null,
-        private ?string $dlq = null,
-        private int $maxMessages = -1,
-        private int $maxCommitRetries = 6,
-        private bool $autoCommit = true,
-        private array $customOptions = []
-    ) {
+    /**
+     * @var string
+     */
+    private $broker;
+    /**
+     * @var mixed[]
+     */
+    private $topics;
+    /**
+     * @var string|null
+     */
+    private $securityProtocol;
+    /**
+     * @var int|null
+     */
+    private $commit;
+    /**
+     * @var string|null
+     */
+    private $groupId;
+    /**
+     * @var \Junges\Kafka\Contracts\Consumer|null
+     */
+    private $consumer;
+    /**
+     * @var \Junges\Kafka\Config\Sasl|null
+     */
+    private $sasl;
+    /**
+     * @var string|null
+     */
+    private $dlq;
+    /**
+     * @var int
+     */
+    private $maxMessages = -1;
+    /**
+     * @var int
+     */
+    private $maxCommitRetries = 6;
+    /**
+     * @var bool
+     */
+    private $autoCommit = true;
+    /**
+     * @var mixed[]
+     */
+    private $customOptions = [];
+    public function __construct(string $broker, array $topics, ?string $securityProtocol = null, ?int $commit = null, ?string $groupId = null, ?Consumer $consumer = null, ?Sasl $sasl = null, ?string $dlq = null, int $maxMessages = -1, int $maxCommitRetries = 6, bool $autoCommit = true, array $customOptions = [])
+    {
+        $this->broker = $broker;
+        $this->topics = $topics;
+        $this->securityProtocol = $securityProtocol;
+        $this->commit = $commit;
+        $this->groupId = $groupId;
+        $this->consumer = $consumer;
+        $this->sasl = $sasl;
+        $this->dlq = $dlq;
+        $this->maxMessages = $maxMessages;
+        $this->maxCommitRetries = $maxCommitRetries;
+        $this->autoCommit = $autoCommit;
+        $this->customOptions = $customOptions;
     }
 
     public function getCommit(): int

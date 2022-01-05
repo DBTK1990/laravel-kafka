@@ -11,7 +11,10 @@ use PHPUnit\Framework\ExpectationFailedException;
 
 class KafkaFakeTest extends LaravelKafkaTestCase
 {
-    private KafkaFake $fake;
+    /**
+     * @var \Junges\Kafka\Support\Testing\Fakes\KafkaFake
+     */
+    private $fake;
 
     public function setUp(): void
     {

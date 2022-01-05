@@ -18,13 +18,13 @@ class JsonDeserializer implements MessageDeserializer
         $body = json_decode($message->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
         return new ConsumedMessage(
-            topicName: $message->getTopicName(),
-            partition: $message->getPartition(),
-            headers: $message->getHeaders(),
-            body: $body,
-            key: $message->getKey(),
-            offset: $message->getOffset(),
-            timestamp: $message->getTimestamp()
+            $message->getTopicName(),
+            $message->getPartition(),
+            $message->getHeaders(),
+            $body,
+            $message->getKey(),
+            $message->getOffset(),
+            $message->getTimestamp()
         );
     }
 }

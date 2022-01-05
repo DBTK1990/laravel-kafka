@@ -11,7 +11,10 @@ use Throwable;
 
 class Logger
 {
-    private MonologLogger $logger;
+    /**
+     * @var MonologLogger
+     */
+    private $logger;
 
     public function __construct()
     {

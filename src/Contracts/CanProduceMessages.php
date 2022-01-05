@@ -17,7 +17,10 @@ interface CanProduceMessages
 
     public function withKafkaKey(string $key): self;
 
-    public function withBodyKey(string $key, mixed $message): self;
+    /**
+     * @param mixed $message
+     */
+    public function withBodyKey(string $key, $message): self;
 
     public function withMessage(Message $message): self;
 

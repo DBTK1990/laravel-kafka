@@ -11,21 +11,66 @@ use Junges\Kafka\Contracts\MessageDeserializer;
 
 class ConsumerBuilder
 {
-    private array $topics;
-    private int $commit;
-    private ?string $groupId;
-    private Closure $handler;
-    private int $maxMessages;
-    private int $maxCommitRetries;
-    private string $brokers;
-    private array $middlewares;
-    private ?Sasl $saslConfig = null;
-    private ?string $dlq = null;
-    private string $securityProtocol;
-    private bool $autoCommit;
-    private array $options;
-    private MessageDeserializer $deserializer;
-    private ?CommitterFactory $committerFactory = null;
+    /**
+     * @var mixed[]
+     */
+    private $topics;
+    /**
+     * @var int
+     */
+    private $commit;
+    /**
+     * @var string|null
+     */
+    private $groupId;
+    /**
+     * @var \Closure
+     */
+    private $handler;
+    /**
+     * @var int
+     */
+    private $maxMessages;
+    /**
+     * @var int
+     */
+    private $maxCommitRetries;
+    /**
+     * @var string
+     */
+    private $brokers;
+    /**
+     * @var mixed[]
+     */
+    private $middlewares;
+    /**
+     * @var \Junges\Kafka\Config\Sasl|null
+     */
+    private $saslConfig;
+    /**
+     * @var string|null
+     */
+    private $dlq;
+    /**
+     * @var string
+     */
+    private $securityProtocol;
+    /**
+     * @var bool
+     */
+    private $autoCommit;
+    /**
+     * @var mixed[]
+     */
+    private $options;
+    /**
+     * @var \Junges\Kafka\Contracts\MessageDeserializer
+     */
+    private $deserializer;
+    /**
+     * @var \Junges\Kafka\Commit\Contracts\CommitterFactory|null
+     */
+    private $committerFactory;
 
     /**
      * @param string $brokers
@@ -69,9 +114,9 @@ class ConsumerBuilder
     public static function create(string $brokers, array $topics = [], string $groupId = null): self
     {
         return new ConsumerBuilder(
-            brokers: $brokers,
-            topics: $topics,
-            groupId: $groupId
+            $brokers,
+            $topics,
+            $groupId
         );
     }
 
@@ -309,18 +354,18 @@ class ConsumerBuilder
     public function build(): Consumer
     {
         $config = new Config(
-            broker: $this->brokers,
-            topics: $this->topics,
-            securityProtocol: $this->securityProtocol,
-            commit: $this->commit,
-            groupId: $this->groupId,
-            consumer: new CallableConsumer($this->handler, $this->middlewares),
-            sasl: $this->saslConfig,
-            dlq: $this->dlq,
-            maxMessages: $this->maxMessages,
-            maxCommitRetries: $this->maxCommitRetries,
-            autoCommit: $this->autoCommit,
-            customOptions: $this->options
+            $this->brokers,
+            $this->topics,
+            $this->securityProtocol,
+            $this->commit,
+            $this->groupId,
+            new CallableConsumer($this->handler, $this->middlewares),
+            $this->saslConfig,
+            $this->dlq,
+            $this->maxMessages,
+            $this->maxCommitRetries,
+            $this->autoCommit,
+            $this->options
         );
 
         return new Consumer($config, $this->deserializer, $this->committerFactory);
@@ -332,7 +377,7 @@ class ConsumerBuilder
      * @param mixed $topic
      * @return void
      */
-    private function validateTopic(mixed $topic)
+    private function validateTopic($topic)
     {
         if (! is_string($topic)) {
             $type = ucfirst(gettype($topic));

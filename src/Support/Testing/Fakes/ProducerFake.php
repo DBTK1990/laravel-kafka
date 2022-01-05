@@ -8,13 +8,24 @@ use RdKafka\Conf;
 
 class ProducerFake
 {
-    private array $messages = [];
+    /**
+     * @var mixed[]
+     */
+    private $messages = [];
     private $produceCallback = null;
+    /**
+     * @var \Junges\Kafka\Config\Config
+     */
+    private $config;
+    /**
+     * @var string
+     */
+    private $topic;
 
-    public function __construct(
-        private Config $config,
-        private string $topic
-    ) {
+    public function __construct(Config $config, string $topic)
+    {
+        $this->config = $config;
+        $this->topic = $topic;
     }
 
     public function setConf(array $options = []): Conf

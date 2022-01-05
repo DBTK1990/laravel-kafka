@@ -18,8 +18,14 @@ use RdKafka\Message;
 
 class ConsumerTest extends LaravelKafkaTestCase
 {
-    private ?Consumer $stoppableConsumer = null;
-    private bool $stoppableConsumerStopped = false;
+    /**
+     * @var \Junges\Kafka\Consumers\Consumer|null
+     */
+    private $stoppableConsumer;
+    /**
+     * @var bool
+     */
+    private $stoppableConsumerStopped = false;
 
     public function testItConsumesAMessageSuccessfullyAndCommit()
     {
@@ -36,16 +42,16 @@ class ConsumerTest extends LaravelKafkaTestCase
         $this->mockProducer();
 
         $config = new Config(
-            broker: 'broker',
-            topics: ['test-topic'],
-            securityProtocol: 'security',
-            commit: 1,
-            groupId: 'group',
-            consumer: $fakeHandler,
-            sasl: null,
-            dlq: null,
-            maxMessages: 1,
-            maxCommitRetries: 1
+            'broker',
+            ['test-topic'],
+            'security',
+            1,
+            'group',
+            $fakeHandler,
+            null,
+            null,
+            1,
+            1
         );
 
         $consumer = new Consumer($config, new JsonDeserializer());
@@ -86,16 +92,16 @@ class ConsumerTest extends LaravelKafkaTestCase
         $fakeHandler = new FakeHandler();
 
         $config = new Config(
-            broker: 'broker',
-            topics: ['test-topic'],
-            securityProtocol: 'security',
-            commit: 1,
-            groupId: 'group',
-            consumer: $fakeHandler,
-            sasl: null,
-            dlq: null,
-            maxMessages: 1,
-            maxCommitRetries: 1
+            'broker',
+            ['test-topic'],
+            'security',
+            1,
+            'group',
+            $fakeHandler,
+            null,
+            null,
+            1,
+            1
         );
 
         $message = new Message();
@@ -158,16 +164,16 @@ class ConsumerTest extends LaravelKafkaTestCase
         $this->mockProducer();
 
         $config = new Config(
-            broker: 'broker',
-            topics: ['test-topic'],
-            securityProtocol: 'security',
-            commit: 1,
-            groupId: 'group',
-            consumer: $fakeHandler,
-            sasl: null,
-            dlq: null,
-            maxMessages: 1,
-            maxCommitRetries: 1
+            'broker',
+            ['test-topic'],
+            'security',
+            1,
+            'group',
+            $fakeHandler,
+            null,
+            null,
+            1,
+            1
         );
 
         $mockedCommitterFactory = $this->createMock(CommitterFactory::class);

@@ -11,16 +11,7 @@ class ConfigTest extends LaravelKafkaTestCase
 {
     public function testItReturnsDefaultKafkaConfiguration()
     {
-        $config = new Config(
-            broker: 'broker',
-            topics: ['topic'],
-            securityProtocol: 'security',
-            commit: 1,
-            groupId: 'group',
-            consumer: $this->createMock(Consumer::class),
-            sasl: null,
-            dlq: null,
-        );
+        $config = new Config('broker', ['topic'], 'security', 1, 'group', $this->createMock(Consumer::class), null, null);
 
         $expectedOptions = [
             'auto.offset.reset' => 'latest',
@@ -40,18 +31,18 @@ class ConfigTest extends LaravelKafkaTestCase
     public function testItOverrideDefaultOptionsIfUsingCustom()
     {
         $config = new Config(
-            broker: 'broker',
-            topics: ['topic'],
-            securityProtocol: 'security',
-            commit: 1,
-            groupId: 'group',
-            consumer: $this->createMock(Consumer::class),
-            sasl: null,
-            dlq: null,
-            maxMessages: -1,
-            maxCommitRetries: 6,
-            autoCommit: true,
-            customOptions: ['auto.offset.reset' => 'smallest', 'compression.codec' => 'gzip']
+            'broker',
+            ['topic'],
+            'security',
+            1,
+            'group',
+            $this->createMock(Consumer::class),
+            null,
+            null,
+            -1,
+            6,
+            true,
+            ['auto.offset.reset' => 'smallest', 'compression.codec' => 'gzip']
         );
 
         $expectedOptions = [
@@ -72,18 +63,18 @@ class ConfigTest extends LaravelKafkaTestCase
     public function testItUsesSaslConfigWhenSet()
     {
         $config = new Config(
-            broker: 'broker',
-            topics: ['topic'],
-            securityProtocol: 'SASL_SSL',
-            commit: 1,
-            groupId: 'group',
-            consumer: $this->createMock(Consumer::class),
-            sasl: new Sasl('foo', 'bar', 'SCRAM-SHA-512', 'SASL_SSL'),
-            dlq: null,
-            maxMessages: -1,
-            maxCommitRetries: 6,
-            autoCommit: true,
-            customOptions: ['auto.offset.reset' => 'smallest', 'compression.codec' => 'gzip']
+            'broker',
+            ['topic'],
+            'SASL_SSL',
+            1,
+            'group',
+            $this->createMock(Consumer::class),
+            new Sasl('foo', 'bar', 'SCRAM-SHA-512', 'SASL_SSL'),
+            null,
+            -1,
+            6,
+            true,
+            ['auto.offset.reset' => 'smallest', 'compression.codec' => 'gzip']
         );
 
         $expectedOptions = [
@@ -108,21 +99,12 @@ class ConfigTest extends LaravelKafkaTestCase
     public function testItReturnsProducerOptions()
     {
         $sasl = new Sasl(
-            username: 'user',
-            password: 'pass',
-            mechanisms: 'mec'
+            'user',
+            'pass',
+            'mec'
         );
 
-        $config = new Config(
-            broker: 'broker',
-            topics: ['topic'],
-            securityProtocol: 'SASL_PLAINTEXT',
-            commit: 1,
-            groupId: 'group',
-            consumer: $this->createMock(Consumer::class),
-            sasl: $sasl,
-            dlq: null,
-        );
+        $config = new Config('broker', ['topic'], 'SASL_PLAINTEXT', 1, 'group', $this->createMock(Consumer::class), $sasl, null);
 
         $expectedOptions = [
             'compression.codec' => 'snappy',
@@ -152,14 +134,18 @@ class ConfigTest extends LaravelKafkaTestCase
         ];
 
         $config = new Config(
-            broker: 'broker',
-            topics: ['topic'],
-            securityProtocol: 'SASL_PLAINTEXT',
-            commit: 1,
-            groupId: 'group',
-            consumer: $this->createMock(Consumer::class),
-            dlq: null,
-            customOptions: $customOptions
+            'broker',
+            ['topic'],
+            'SASL_PLAINTEXT',
+            1,
+            'group',
+            $this->createMock(Consumer::class),
+            null,
+            null,
+            -1,
+            6,
+            true,
+            $customOptions
         );
 
         $expectedOptions = [

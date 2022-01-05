@@ -8,8 +8,14 @@ use Junges\Kafka\Contracts\KafkaConsumerMessage;
 
 class CallableConsumer extends Consumer
 {
-    private Closure $handler;
-    private array $middlewares;
+    /**
+     * @var \Closure
+     */
+    private $handler;
+    /**
+     * @var mixed[]
+     */
+    private $middlewares;
 
     public function __construct(callable $handler, array $middlewares)
     {
@@ -17,7 +23,9 @@ class CallableConsumer extends Consumer
 
         $this->middlewares = array_map([$this, 'wrapMiddleware'], $middlewares);
         $this->middlewares[] = $this->wrapMiddleware(
-            fn ($message, callable $next) => $next($message)
+            function ($message, callable $next) {
+                return $next($message);
+            }
         );
     }
 
@@ -46,6 +54,10 @@ class CallableConsumer extends Consumer
      */
     private function wrapMiddleware(callable $middleware): callable
     {
-        return fn (callable $handler) => fn ($message) => $middleware($message, $handler);
+        return function (callable $handler) use ($middleware) {
+            return function ($message) use ($middleware, $handler) {
+                return $middleware($message, $handler);
+            };
+        };
     }
 }

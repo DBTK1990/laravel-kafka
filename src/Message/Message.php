@@ -30,7 +30,7 @@ class Message extends AbstractMessage implements Arrayable, KafkaProducerMessage
      * @param mixed $message
      * @return $this
      */
-    public function withBodyKey(string $key, mixed $message): Message
+    public function withBodyKey(string $key, $message): Message
     {
         $this->body[$key] = $message;
 
@@ -56,7 +56,7 @@ class Message extends AbstractMessage implements Arrayable, KafkaProducerMessage
      * @param array|null $headers
      * @return $this
      */
-    public function withHeaders(?array $headers): Message
+    public function withHeaders(?array $headers): \Junges\Kafka\Contracts\KafkaProducerMessage
     {
         $this->headers = $headers;
 
@@ -69,7 +69,7 @@ class Message extends AbstractMessage implements Arrayable, KafkaProducerMessage
      * @param string|null $key
      * @return $this
      */
-    public function withKey(?string $key): Message
+    public function withKey(?string $key): \Junges\Kafka\Contracts\KafkaProducerMessage
     {
         $this->key = $key;
 
@@ -86,14 +86,20 @@ class Message extends AbstractMessage implements Arrayable, KafkaProducerMessage
         ];
     }
 
-    public function withBody(mixed $body): KafkaProducerMessage
+    /**
+     * @param mixed $body
+     */
+    public function withBody($body): KafkaProducerMessage
     {
         $this->body = $body;
 
         return $this;
     }
 
-    public function withHeader(string $key, mixed $value): KafkaProducerMessage
+    /**
+     * @param mixed $value
+     */
+    public function withHeader(string $key, $value): KafkaProducerMessage
     {
         $this->headers[$key] = $value;
 

@@ -7,17 +7,50 @@ use Junges\Kafka\Config\Sasl;
 
 class Options
 {
-    private ?array $topics = null;
-    private ?string $consumer = null;
-    private ?string $groupId = null;
-    private ?int $commit = 1;
-    private ?string $dlq = null;
-    private int $maxMessages = -1;
-    private ?string $securityProtocol = 'plaintext';
-    private ?string $saslUsername;
-    private ?string $saslPassword;
-    private ?string $saslMechanisms;
-    private array $config;
+    /**
+     * @var mixed[]|null
+     */
+    private $topics;
+    /**
+     * @var string|null
+     */
+    private $consumer;
+    /**
+     * @var string|null
+     */
+    private $groupId;
+    /**
+     * @var int|null
+     */
+    private $commit;
+    /**
+     * @var string|null
+     */
+    private $dlq;
+    /**
+     * @var int
+     */
+    private $maxMessages = -1;
+    /**
+     * @var string|null
+     */
+    private $securityProtocol;
+    /**
+     * @var string|null
+     */
+    private $saslUsername;
+    /**
+     * @var string|null
+     */
+    private $saslPassword;
+    /**
+     * @var string|null
+     */
+    private $saslMechanisms;
+    /**
+     * @var mixed[]
+     */
+    private $config;
 
     #[Pure]
     public function __construct(array $options, array $config)
@@ -72,9 +105,9 @@ class Options
         }
 
         return new Sasl(
-            username: $this->saslUsername,
-            password: $this->saslPassword,
-            mechanisms: $this->saslMechanisms
+            $this->saslUsername,
+            $this->saslPassword,
+            $this->saslMechanisms
         );
     }
 

@@ -26,7 +26,10 @@ class KafkaConsumerCommand extends Command
 
     protected $description = 'A Kafka Consumer for Laravel.';
 
-    private array $config;
+    /**
+     * @var mixed[]
+     */
+    private $config;
 
     public function __construct()
     {
@@ -62,15 +65,15 @@ class KafkaConsumerCommand extends Command
         $consumer = $options->getConsumer();
 
         $config = new Config(
-            broker: $options->getBroker(),
-            topics: $options->getTopics(),
-            securityProtocol: $options->getSecurityProtocol(),
-            commit: $options->getCommit(),
-            groupId: $options->getGroupId(),
-            consumer: new $consumer(),
-            sasl: $options->getSasl(),
-            dlq: $options->getDlq(),
-            maxMessages: $options->getMaxMessages()
+            $options->getBroker(),
+            $options->getTopics(),
+            $options->getSecurityProtocol(),
+            $options->getCommit(),
+            $options->getGroupId(),
+            new $consumer(),
+            $options->getSasl(),
+            $options->getDlq(),
+            $options->getMaxMessages()
         );
 
         /** @var Consumer $consumer */

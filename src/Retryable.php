@@ -7,11 +7,23 @@ use Junges\Kafka\Commit\Contracts\Sleeper;
 
 class Retryable
 {
-    public function __construct(
-        private Sleeper $sleeper,
-        private int $maximumRetries,
-        private ?array $retryableErrors
-    ) {
+    /**
+     * @var \Junges\Kafka\Commit\Contracts\Sleeper
+     */
+    private $sleeper;
+    /**
+     * @var int
+     */
+    private $maximumRetries;
+    /**
+     * @var mixed[]|null
+     */
+    private $retryableErrors;
+    public function __construct(Sleeper $sleeper, int $maximumRetries, ?array $retryableErrors)
+    {
+        $this->sleeper = $sleeper;
+        $this->maximumRetries = $maximumRetries;
+        $this->retryableErrors = $retryableErrors;
     }
 
     /**
@@ -34,7 +46,7 @@ class Retryable
                 $currentRetries < $this->maximumRetries
                 && (is_null($this->retryableErrors) || in_array($exception->getCode(), $this->retryableErrors))
             ) {
-                $this->sleeper->sleep((int)($delayInSeconds * 1e6));
+                $this->sleeper->sleep((int)($delayInSeconds * 1000000.0));
                 $this->retry(
                     $function,
                     ++$currentRetries,

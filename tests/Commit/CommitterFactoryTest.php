@@ -19,17 +19,17 @@ class CommitterFactoryTest extends LaravelKafkaTestCase
     public function testShouldBuildARetryableBatchCommitterWhenAutoCommitIsDisable(): void
     {
         $config = new Config(
-            broker: 'broker',
-            topics: ['topic'],
-            securityProtocol: 'security',
-            commit: 1,
-            groupId: 'group',
-            consumer: $this->createMock(Consumer::class),
-            sasl: null,
-            dlq: null,
-            maxMessages: -1,
-            maxCommitRetries: 6,
-            autoCommit: false
+            'broker',
+            ['topic'],
+            'security',
+            1,
+            'group',
+            $this->createMock(Consumer::class),
+            null,
+            null,
+            -1,
+            6,
+            false
         );
 
         $consumer = $this->createMock(KafkaConsumer::class);
@@ -58,17 +58,17 @@ class CommitterFactoryTest extends LaravelKafkaTestCase
     public function testShouldBuildAVoidCommitterWhenAutoCommitIsEnabled(): void
     {
         $config = new Config(
-            broker: 'broker',
-            topics: ['topic'],
-            securityProtocol: 'security',
-            commit: 1,
-            groupId: 'group',
-            consumer: $this->createMock(Consumer::class),
-            sasl: null,
-            dlq: null,
-            maxMessages: 6,
-            maxCommitRetries: 6,
-            autoCommit: true
+            'broker',
+            ['topic'],
+            'security',
+            1,
+            'group',
+            $this->createMock(Consumer::class),
+            null,
+            null,
+            6,
+            6,
+            true
         );
 
         $consumer = $this->createMock(KafkaConsumer::class);

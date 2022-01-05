@@ -67,7 +67,7 @@ class RetryableCommitterTest extends LaravelKafkaTestCase
         } catch (RdKafkaException $exception) {
         }
 
-        $expectedSleeps = [1e6, 2e6, 4e6, 8e6, 16e6, 32e6];
+        $expectedSleeps = [1000000.0, 2000000.0, 4000000.0, 8000000.0, 16000000.0, 32000000.0];
         $this->assertEquals($expectedSleeps, $sleeper->getSleeps());
     }
 }

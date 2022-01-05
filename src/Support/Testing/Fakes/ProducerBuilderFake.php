@@ -12,24 +12,53 @@ use Junges\Kafka\Message\Message;
 
 class ProducerBuilderFake implements CanProduceMessages
 {
-    private array $options = [];
-    private KafkaProducerMessage $message;
-    private MessageSerializer $serializer;
-    private ?Sasl $saslConfig = null;
-    private ?Closure $producerCallback = null;
-
-    public function __construct(
-        private string $topic,
-        private ?string $broker = null,
-    ) {
+    /**
+     * @var mixed[]
+     */
+    private $options = [];
+    /**
+     * @var \Junges\Kafka\Contracts\KafkaProducerMessage
+     */
+    private $message;
+    /**
+     * @var \Junges\Kafka\Contracts\MessageSerializer
+     */
+    private $serializer;
+    /**
+     * @var \Junges\Kafka\Config\Sasl|null
+     */
+    private $saslConfig;
+    /**
+     * @var \Closure|null
+     */
+    private $producerCallback;
+    /**
+     * @var string
+     */
+    private $topic;
+    /**
+     * @var string|null
+     */
+    private $broker;
+    public function __construct(string $topic, ?string $broker = null)
+    {
+        $this->topic = $topic;
+        $this->broker = $broker;
         $this->message = new Message($topic);
-
         $conf = new Config(
-            broker: '',
-            topics: [''],
-            customOptions: []
+            '',
+            [''],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            -1,
+            6,
+            true,
+            []
         );
-
         $this->makeProducer($conf);
     }
 
@@ -39,7 +68,7 @@ class ProducerBuilderFake implements CanProduceMessages
      * @param string|null $broker
      * @return static
      */
-    public static function create(string $topic, string $broker = null): self
+    public static function create(string $topic, string $broker = null): \Junges\Kafka\Contracts\CanProduceMessages
     {
         return new ProducerBuilderFake($broker, $topic);
     }
@@ -51,7 +80,10 @@ class ProducerBuilderFake implements CanProduceMessages
         return $this;
     }
 
-    public function withConfigOption(string $name, string $option): self
+    /**
+     * @return $this
+     */
+    public function withConfigOption(string $name, string $option): \Junges\Kafka\Contracts\CanProduceMessages
     {
         $this->options[$name] = $option;
 
@@ -63,7 +95,7 @@ class ProducerBuilderFake implements CanProduceMessages
      * @param array $options
      * @return $this
      */
-    public function withConfigOptions(array $options): self
+    public function withConfigOptions(array $options): \Junges\Kafka\Contracts\CanProduceMessages
     {
         foreach ($options as $name => $value) {
             $this->withConfigOption($name, $value);
@@ -77,7 +109,7 @@ class ProducerBuilderFake implements CanProduceMessages
      * @param array $headers
      * @return $this
      */
-    public function withHeaders(array $headers): self
+    public function withHeaders(array $headers): \Junges\Kafka\Contracts\CanProduceMessages
     {
         $this->message->withHeaders($headers);
 
@@ -89,7 +121,7 @@ class ProducerBuilderFake implements CanProduceMessages
      * @param string $key
      * @return $this
      */
-    public function withKafkaKey(string $key): self
+    public function withKafkaKey(string $key): \Junges\Kafka\Contracts\CanProduceMessages
     {
         $this->message->withKey($key);
 
@@ -102,7 +134,7 @@ class ProducerBuilderFake implements CanProduceMessages
      * @param mixed $message
      * @return ProducerBuilderFake
      */
-    public function withBodyKey(string $key, mixed $message): self
+    public function withBodyKey(string $key, $message): \Junges\Kafka\Contracts\CanProduceMessages
     {
         $this->message->withBodyKey($key, $message);
 
@@ -115,7 +147,7 @@ class ProducerBuilderFake implements CanProduceMessages
      * @param Message $message
      * @return $this
      */
-    public function withMessage(Message $message): self
+    public function withMessage(Message $message): \Junges\Kafka\Contracts\CanProduceMessages
     {
         $this->message = $message;
 
@@ -127,7 +159,7 @@ class ProducerBuilderFake implements CanProduceMessages
      * @param bool $enabled
      * @return $this
      */
-    public function withDebugEnabled(bool $enabled = true): self
+    public function withDebugEnabled(bool $enabled = true): \Junges\Kafka\Contracts\CanProduceMessages
     {
         if ($enabled) {
             $this->withConfigOptions([
@@ -206,10 +238,18 @@ class ProducerBuilderFake implements CanProduceMessages
     private function build(): ProducerFake
     {
         $conf = new Config(
-            broker: $this->broker ?? config('kafka.brokers'),
-            topics: [$this->getTopic()],
-            sasl: $this->saslConfig,
-            customOptions: $this->options
+            $this->broker ?? config('kafka.brokers'),
+            [$this->getTopic()],
+            null,
+            null,
+            null,
+            null,
+            $this->saslConfig,
+            null,
+            -1,
+            6,
+            true,
+            $this->options
         );
 
         return $this->makeProducer($conf);

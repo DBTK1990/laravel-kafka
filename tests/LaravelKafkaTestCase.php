@@ -113,7 +113,10 @@ class LaravelKafkaTestCase extends Orchestra
         return $reflectionProperty->getValue($object);
     }
 
-    private function getMockedLogger(): m\MockInterface | m\LegacyMockInterface | null
+    /**
+     * @return m\LegacyMockInterface|m\MockInterface|null
+     */
+    private function getMockedLogger()
     {
         return m::mock(Logger::class)
             ->shouldReceive('error')

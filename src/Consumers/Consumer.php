@@ -38,24 +38,59 @@ class Consumer
         RD_KAFKA_RESP_ERR__NO_OFFSET,
     ];
 
-    private Logger $logger;
-    private KafkaConsumer $consumer;
-    private KafkaProducer $producer;
-    private MessageCounter $messageCounter;
-    private Committer $committer;
-    private Retryable $retryable;
-    private CommitterFactory $committerFactory;
-    private MessageDeserializer $deserializer;
-    private bool $stopRequested = false;
-    private ?Closure $onStopConsume = null;
+    /**
+     * @var \Junges\Kafka\Logger
+     */
+    private $logger;
+    /**
+     * @var \RdKafka\KafkaConsumer
+     */
+    private $consumer;
+    /**
+     * @var KafkaProducer
+     */
+    private $producer;
+    /**
+     * @var \Junges\Kafka\MessageCounter
+     */
+    private $messageCounter;
+    /**
+     * @var \Junges\Kafka\Commit\Contracts\Committer
+     */
+    private $committer;
+    /**
+     * @var \Junges\Kafka\Retryable
+     */
+    private $retryable;
+    /**
+     * @var \Junges\Kafka\Commit\Contracts\CommitterFactory
+     */
+    private $committerFactory;
+    /**
+     * @var \Junges\Kafka\Contracts\MessageDeserializer
+     */
+    private $deserializer;
+    /**
+     * @var bool
+     */
+    private $stopRequested = false;
+    /**
+     * @var \Closure|null
+     */
+    private $onStopConsume;
+    /**
+     * @var \Junges\Kafka\Config\Config
+     */
+    private $config;
 
     /**
      * @param \Junges\Kafka\Config\Config $config
      * @param MessageDeserializer $deserializer
      * @param \Junges\Kafka\Commit\Contracts\CommitterFactory|null $committerFactory
      */
-    public function __construct(private Config $config, MessageDeserializer $deserializer, CommitterFactory $committerFactory = null)
+    public function __construct(Config $config, MessageDeserializer $deserializer, CommitterFactory $committerFactory = null)
     {
+        $this->config = $config;
         $this->logger = app(Logger::class);
         $this->messageCounter = new MessageCounter($config->getMaxMessages());
         $this->retryable = new Retryable(new NativeSleeper(), 6, self::TIMEOUT_ERRORS);
@@ -84,7 +119,9 @@ class Consumer
         $this->consumer->subscribe($this->config->getTopics());
 
         do {
-            $this->retryable->retry(fn () => $this->doConsume());
+            $this->retryable->retry(function () {
+                return $this->doConsume();
+            });
         } while (! $this->maxMessagesLimitReached() && ! $this->stopRequested);
 
         if ($this->onStopConsume) {
@@ -175,10 +212,10 @@ class Consumer
      * Handle exceptions while consuming messages.
      *
      * @param \Throwable $exception
-     * @param Message|ConsumedMessage $message
+     * @param \Junges\Kafka\Contracts\KafkaConsumerMessage|\RdKafka\Message $message
      * @return bool
      */
-    private function handleException(Throwable $exception, Message|KafkaConsumerMessage $message): bool
+    private function handleException(Throwable $exception, $message): bool
     {
         try {
             $this->config->getConsumer()->failed(
@@ -206,10 +243,10 @@ class Consumer
     {
         $topic = $this->producer->newTopic($this->config->getDlq());
         $topic->produce(
-            partition: RD_KAFKA_PARTITION_UA,
-            msgflags: 0,
-            payload: $message->payload,
-            key: $this->config->getConsumer()->producerKey($message->payload)
+            RD_KAFKA_PARTITION_UA,
+            0,
+            $message->payload,
+            $this->config->getConsumer()->producerKey($message->payload)
         );
 
         if (method_exists($this->producer, 'flush')) {
